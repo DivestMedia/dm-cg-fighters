@@ -106,7 +106,7 @@ if(!class_exists('DMAds'))
                 ];
             }
             wp_nonce_field( basename( __FILE__ ), '_banner_upload_metabox_nonce' );
-            include_once( DM_FIGHTERS_PLUGIN_DIR . 'partials/banner-upload-metabox.php' );
+            include_once( DM_FIGHTERS_PLUGIN_DIR . 'templates/banner-upload-metabox.php' );
         }
 
         public function create_banners_save_post(){
@@ -116,6 +116,8 @@ if(!class_exists('DMAds'))
         public function save_banner_upload_metabox(){
 
             global $post;
+
+            if(!$post) return;
             // if( !isset( $_POST['_banner_upload_metabox_nonce'] ) || !wp_verify_nonce( $_POST['_banner_upload_metabox_nonce'], basename( __FILE__ ) ) ){
             //     return;
             // }
@@ -142,7 +144,7 @@ if(!class_exists('DMAds'))
 
         public function enqueue_admin_styles(){
             global $post;
-            if($post->post_type != 'affiliate_banner')
+            if($post && $post->post_type != 'affiliate_banner')
             return;
 
             $styles = [
@@ -161,7 +163,7 @@ if(!class_exists('DMAds'))
 
         public function enqueue_admin_scripts($hook){
             global $post;
-            if($post->post_type != 'affiliate_banner')
+            if($post && $post->post_type != 'affiliate_banner')
             return;
 
             $scripts = [
@@ -241,7 +243,7 @@ if(!class_exists('DMAds'))
                     $code = get_post_meta($ads[0]->ID,'_ab_banner_code',true)[$index];
                     $width = get_post_meta($ads[0]->ID,'_ab_banner_width',true)[$index];
                     $height = get_post_meta($ads[0]->ID,'_ab_banner_height',true)[$index];
-                    include DM_FIGHTERS_PLUGIN_DIR . "partials/widget-affiliate-banner.php";
+                    include DM_FIGHTERS_PLUGIN_DIR . "templates/widget-affiliate-banner.php";
                 }
             }
 
