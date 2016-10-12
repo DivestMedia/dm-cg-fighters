@@ -17,6 +17,7 @@ require_once(DM_FIGHTERS_PLUGIN_DIR . 'lib/class-dm-fighters-generate.php');
 require_once(DM_FIGHTERS_PLUGIN_DIR . '/vendor/autoload.php');
 require_once(DM_FIGHTERS_PLUGIN_DIR . 'lib/class-dm-fighters.php');
 require_once(DM_FIGHTERS_PLUGIN_DIR . 'lib/class-dm-fights.php');
+require_once(DM_FIGHTERS_PLUGIN_DIR . 'lib/class-dm-ads.php');
 
 if(class_exists('DMFighters')){
   register_activation_hook(__FILE__, array('DMFighters', 'activate'));
@@ -26,6 +27,9 @@ if(class_exists('DMFighters')){
 
 if(class_exists('DMFights')){
   $DMFights = new DMFights();
+}
+if(class_exists('DMAds')){
+  $DMAds = new DMAds();
 }
 
 // if(class_exists('DMFightersGenerate')){
