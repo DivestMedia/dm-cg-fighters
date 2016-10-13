@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 if(!defined('DM_FIGHTERS_VERSION')) die('Fatal Error');
 
@@ -38,7 +38,60 @@ if(!class_exists('DMFighters')){
             // add_filter( 'manage_edit-iod_video_columns', [&$this,'custom_iod_video_columns'] ) ;
             // add_action( 'manage_posts_custom_column' , [&$this,'iod_video_columns_data'], 10, 2 );
             // add_action( 'admin_head' , [&$this,'iod_video_columns_css'] );
+            add_filter( 'manage_edit-fighter_columns', [&$this,'custom_fighter_columns'] ) ;
+            add_action( 'manage_posts_custom_column' , [&$this,'fighter_columns_data'], 10, 2 );
+            add_action( 'admin_head' , [&$this,'fighter_columns_css'] );
+
+            add_action( 'wp_ajax_updatefeaturedfighter', [&$this,'updatefeaturedfighter'] );
         }
+
+        public function updatefeaturedfighter(){
+          if(!empty($_POST['post_ID'])&&!empty($_POST['action'])){
+            $_post_ID = sanitize_text_field($_POST['post_ID']);
+            $meta_key = '_is_featured';
+            $isfeatured = json_decode(get_post_meta( $_post_ID, $meta_key,true));
+            if(empty($isfeatured)){
+              delete_post_meta($_post_ID, $meta_key);
+              add_post_meta($_post_ID, $meta_key, '1');
+              echo json_encode(['status'=>1]);
+              die();
+            }else{
+              delete_post_meta($_post_ID, $meta_key);
+              echo json_encode(['status'=>2]);
+              die();
+            }
+          }
+          echo json_encode(['status'=>0]);
+          die();
+        }
+
+        public function fighter_columns_css(){
+            echo '
+            <style>
+                .column-is_featured_cr{width:75px;}
+                .btn-fighter-update-featured{cursor:pointer;color:#0073aa;}
+            </style>
+            ';
+        }
+
+        public function custom_fighter_columns( $columns ) {
+            $newcolumns = array(
+                'is_featured_cr' => __( 'Is Featured' )
+            );
+            $columns = array_slice($columns, 0, 5, true) + $newcolumns + array_slice($columns, 5, count($columns) - 1, true) ;
+            return $columns;
+        }
+
+        public function fighter_columns_data( $column, $post_id ) {
+            switch ( $column ) {
+            case 'is_featured_cr':
+                $isfeatured = json_decode(get_post_meta( $post_id, '_is_featured',true));
+                $icon = empty($isfeatured)?'empty':'filled';
+                echo '<div class="btn-fighter-update-featured" data-id="'.$post_id.'" title="Set as featured video"><span class="dashicons dashicons-star-'.$icon.'"></span></div>';
+                break;
+            }
+        }
+
 
         public function iod_video_columns_css(){
             echo '
@@ -259,7 +312,7 @@ if(!class_exists('DMFighters')){
                                 'redirecturl' => home_url(),
                                 'loadingmessage' => __('Sending user info, please wait...')
                             ));
-                            
+
                         }
                     }else{
                         return;

@@ -59,7 +59,7 @@ if(!class_exists('DMFightersGenerate')){
         public $feed_base_url = 'http://www.ufc.com';
         public $feed_category_url = 'http://www.ufc.com/fighter/Weight_Class/';
         public $fighter_thumb_base_url = 'http://media.ufc.tv/';
-		
+
 		public function __CONSTRUCT(){
 			add_action('admin_menu', [$this,'cgp_menu_page']);
 			// $this->admin_init();
@@ -153,7 +153,7 @@ if(!class_exists('DMFightersGenerate')){
             		if($key != 0)
             			$url = $this->fighter_thumb_base_url.$url;
 
-        		 	$image_data = file_get_contents($url,false,$context);
+        		 	$image_data = self::file_get_contents_curl($url);
 		            $filename = basename($url);
 		            // Remove Query Strings
 		            $querypos = strpos($filename, '?');
@@ -171,7 +171,7 @@ if(!class_exists('DMFightersGenerate')){
 		                'post_status' => 'inherit'
 		            );
 		            $tempid = wp_insert_attachment( $attachment, $file, $post_id );
-		            
+
 		            if($key==1){
 		            	$this->save_meta_value($post_id,'_uf_image_right',$tempid);
 		            }elseif($key==2){
@@ -182,7 +182,7 @@ if(!class_exists('DMFightersGenerate')){
 		            $res1 = wp_update_attachment_metadata( $tempid, $attach_data );
 		            array_push($attach_id, $tempid);
             	}
-	           
+
 	            if($thumbnail){
 	                $res2 = set_post_thumbnail( $post_id, $attach_id[0] );
 	            }
@@ -229,7 +229,7 @@ if(!class_exists('DMFightersGenerate')){
 		public function get_fighters_category_url(){
 			$f_category = $this->visit('http://www.ufc.com/fighters');
 			foreach ($this->fighter_category as $key => $value) {
-				if(!strcasecmp($_POST['cat'], $_cat)){
+				if(!strcasecmp($_POST['cat'], $key)){
 					$elem = $f_category->find('xpath', $value);
 					if(!empty($elem)){
 						$this->fighter_category[$key] = $elem->getAttribute('href');
@@ -396,7 +396,7 @@ if(!class_exists('DMFightersGenerate')){
 					// array_push($this->generated_fighters[$_cat], $_temp_fighter);
 				}
 			}
-			
+
 		}
 
 		public function visit($url){
@@ -409,7 +409,7 @@ if(!class_exists('DMFightersGenerate')){
 
 		public function cgp_menu_page(){
 	  		add_menu_page('Generate Fighters', 'Generate Fighters', 'manage_options', 'generate-fighters-menu', [$this,'plugin_settings_page'], 'dashicons-update');
-	  		
+
 
 		}
 
@@ -422,7 +422,7 @@ if(!class_exists('DMFightersGenerate')){
 		?>
 		<div class="wrap">
 		  <h2>Generate Fighters</h2>
-		 
+
 		  <!--<label>Limit: </label><input id="inp-gen-limit" type="number" max="50" min="1" value="1"/>-->
 		  <select id="dd-category">
 		  	<?php
@@ -440,6 +440,24 @@ if(!class_exists('DMFightersGenerate')){
 		  <div class="logs-cont"></div>
 		</div>
 		<?php
+		}
+    public function file_get_contents_curl($url){
+
+		    $ch = curl_init();
+
+		    curl_setopt($ch,CURLOPT_USERAGENT,"Mozilla/5.0 (Linux; Android 6.0.1; MotoG3 Build/MPI24.107-55) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.81 Mobile Safari/537.36");
+		    // Disable SSL verification
+		    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+		    // Will return the response, if false it print the response
+		    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+		    // Set the url
+		    curl_setopt($ch, CURLOPT_URL,$url);
+		    // Execute
+		    $result=curl_exec($ch);
+		    // Closing
+		    curl_close($ch);
+
+		    return $result;
 		}
 	}
 }

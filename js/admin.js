@@ -2,6 +2,26 @@
     'use strict';
     var cur = 0;
     $(function() {
+      $('.btn-fighter-update-featured').click(function(){
+        var cur_btn = $(this);
+        $.ajax({
+            url: "/wp-admin/admin-ajax.php",
+            dataType: 'json',
+            type: 'POST',
+            data: {
+                'action':'updatefeaturedfighter',
+                'post_ID': $(this).data('id')
+            },
+            success: function(result){
+                if(result.status==1){
+                  cur_btn.find('span').addClass('dashicons-star-filled').removeClass('dashicons-star-empty');
+                }else if(result.status==2){
+                  cur_btn.find('span').removeClass('dashicons-star-filled').addClass('dashicons-star-empty');
+                }
+            },
+            error: function(errorThrown){console.log(errorThrown);}
+        });
+      });
         var frame,
         metaBox = $('#fighter_images'),
         addImgLink = metaBox.find('.upload-custom-img'),
@@ -62,12 +82,12 @@
 		$('#btn-generate-fighters').click(function(){
             $('.logs-cont').empty();
             $('.progress').css('width',0);
-            
+
 			var cat = $('#dd-category').val();
             var limit = $('#inp-gen-limit').val();
             cur = 0;
             cat = cat.replace(' ','_');
-            
+
 			$.ajax({
 				type: 'POST',
 				url: ajax_auth_object.ajaxurl,
@@ -80,7 +100,7 @@
 					var pages = JSON.parse(data);
                     if(pages.length){
                         $('.cont-progress').show();
-                        $('.logs-cont').html("0 of "+pages.length+" page/s fetched! <br>"); 
+                        $('.logs-cont').html("0 of "+pages.length+" page/s fetched! <br>");
                         var get_fighterinterval = setInterval(function(){
                             if($.active==0){
                                 if(cur==pages.length){
@@ -94,7 +114,7 @@
 				},
 				error: function(errorThrown){
 				  	console.log(errorThrown);
-				} 
+				}
 			});
 		});
     });
@@ -117,13 +137,13 @@
                 page: page,
             },
             success: function(data){
-                cur++;               
+                cur++;
                 $('.logs-cont').html((cur)+" of "+total+" page/s fetched! <br>");
                 update_progressbar(total,cur);
             },
             error: function(errorThrown){
                 console.log(errorThrown);
-            } 
+            }
         });
     }
 }(jQuery));
