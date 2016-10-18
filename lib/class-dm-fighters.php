@@ -26,6 +26,10 @@ if(!class_exists('DMFighters')){
                 '_uf_strikingdefense',
                 '_uf_submission',
                 '_uf_rank',
+                '_uf_birthday',
+                '_uf_association',
+                '_uf_firstname',
+                '_uf_lastname',
             ],
             'fighter_images' => [
                 '_uf_image'
@@ -246,6 +250,16 @@ if(!class_exists('DMFighters')){
                     }
 
                     foreach ($this->option_fields['fighter_images'] as $field) {
+                        $_images = explode(',',$_POST[$field]);
+                        if(!empty($_images[1])){
+                            $this->save_meta_value($post->ID,'_uf_image_left',$_images[1]);
+                        }
+                        if(!empty($_images[2])){
+                            $this->save_meta_value($post->ID,'_uf_image_right',$_images[2]);
+                        }
+                        if(!empty($_images[3])){
+                            $this->save_meta_value($post->ID,'_uf_bio_image',$_images[3]);
+                        }
                         $this->save_meta_value($post->ID,$field,$_POST[$field]);
                     }
                 }

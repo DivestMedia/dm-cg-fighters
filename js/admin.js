@@ -2,6 +2,23 @@
     'use strict';
     var cur = 0;
     $(function() {
+
+        if($( ".fighter-img-container" ).find('div').length){
+              $( ".fighter-img-container" ).sortable({
+                stop: function (evet, ui){
+                    var imgid = [];
+                    $('.fighter-img-container').find('.cont-thumb-img').each(function(){
+                        imgid.push($(this).data('id'));
+                    });
+                    $('input[name="_uf_image"]').val(imgid.join());
+                  // $('#container-admin-menu').find('.btn-delete-slider').each(function(){
+                  //   $(this).data('pos',pos++);
+                  // });
+                }
+              });
+              $( ".fighter-img-container" ).disableSelection();
+        }
+
       $('.btn-fighter-update-featured').click(function(){
         var cur_btn = $(this);
         $.ajax({

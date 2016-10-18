@@ -2,8 +2,12 @@
 
   <?php
   $basic_info_fields = [
+    '_uf_firstname'=>'First Name',
+    '_uf_lastname'=>'Last Name',
     '_uf_nickname'=>'Nickname',
     '_uf_hometown'=>'Hometown',
+    '_uf_birthday'=>'Birthday',
+    '_uf_association'=>'Association',
     '_uf_age'=>'Age',
     '_uf_height'=>'Height',
     '_uf_weight'=>'Weight',

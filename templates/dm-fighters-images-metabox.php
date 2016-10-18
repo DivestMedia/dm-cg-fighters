@@ -1,3 +1,4 @@
+<strong>NOTE:</strong> <p style="font-size: 13px;font-style: italic;display: inline-block;">first image - profile, second image - left image, third image - right image,</p>
 <div class="admin-meta-box-fighter-images">
 <div class="fighter-img-container">
   <?php
@@ -6,9 +7,9 @@
   if(!empty($_uf_images)){
     foreach ($_uf_images as $id) {
       if(!empty($id)){
-        $img_url = wp_get_attachment_image_src($id)[0];
+        $img_url = wp_get_attachment_image_src($id,'full')[0];
         ?>
-          <div class="cont-thumb-img" data-url="<?=$img_url?>" style="background: url('<?=$img_url?>') no-repeat center center;background-size: cover;"></div>
+          <div class="cont-thumb-img" data-id="<?=$id?>" data-url="<?=$img_url?>" style="background: url('<?=$img_url?>') no-repeat center center;background-size: cover;"></div>
         <?php
       }
     }
