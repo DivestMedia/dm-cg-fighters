@@ -140,7 +140,7 @@ if(!class_exists('DMFighters')){
         }
         public function create_fighters_post_type(){
             register_taxonomy(
-            'fighters_category',  //The name of the taxonomy. Name should be in slug form (must not contain capital letters or spaces).
+            'fighters',  //The name of the taxonomy. Name should be in slug form (must not contain capital letters or spaces).
             'fighter',        //post type name
             array(
                 'hierarchical' => true,
@@ -171,7 +171,7 @@ if(!class_exists('DMFighters')){
                     'assign_terms',
                     ],
                     'rewrite' =>[
-                        'slug' => 'fighter_category', // This controls the base slug that will display before each term
+                        'slug' => 'fighters', // This controls the base slug that will display before each term
                         'with_front' => false // Don't display the category base before
                         ]
                     )
@@ -194,7 +194,7 @@ if(!class_exists('DMFighters')){
                         'has_archive' => true,
                         'menu_icon' => 'dashicons-universal-access',
                         'rewrite' => [
-                            'slug' => 'fighters',
+                            'slug' => 'fighter',
                         ],
                         'supports' => [
                             'title',
@@ -205,7 +205,7 @@ if(!class_exists('DMFighters')){
                             'custom-fields',
                             'comments'
                         ],
-                        'taxonomies' => ['post_tag','fighters_category']
+                        'taxonomies' => ['post_tag','fighters']
                     ]);
                     flush_rewrite_rules();
                 }

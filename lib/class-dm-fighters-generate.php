@@ -69,7 +69,7 @@ if(!class_exists('DMFightersGenerate')){
 		public function save_to_post(){
 			if(!empty($this->generated_fighters)){
 				foreach ($this->generated_fighters as $fc => $gf) {
-					$category = get_term_by('slug', strtolower($fc) , 'fighters_category' );
+					$category = get_term_by('slug', strtolower($fc) , 'fighters' );
 			        if ( $category->term_id ) {
 			            $category = $category->term_id;
 			        }else{
@@ -77,7 +77,7 @@ if(!class_exists('DMFightersGenerate')){
 			                'cat_name' => ucfirst($fc),
 			                'category_description' => '',
 			                'category_nicename' => ucfirst($fc),
-			                'taxonomy' => 'fighters_category'
+			                'taxonomy' => 'fighters'
 			            ],false);
 			        }
 					foreach ($gf as $key => $f) {
@@ -91,7 +91,7 @@ if(!class_exists('DMFightersGenerate')){
 					        ];
 							$_post_id = wp_insert_post($_wp_post_fields);
 							if(!empty($_post_id)){
-								wp_set_post_terms( $_post_id, [$category], 'fighters_category' );
+								wp_set_post_terms( $_post_id, [$category], 'fighters' );
 								$option_fields = [
 					                '_uf_nickname' => $f['gssNickname'],
 					                '_uf_hometown' => $f['ighter-lives-in'],
@@ -239,7 +239,7 @@ if(!class_exists('DMFightersGenerate')){
 		}
 
 		public function save_to_post_now($_cat,$_temp_fighter){
-			$category = get_term_by('slug', strtolower($_cat) , 'fighters_category' );
+			$category = get_term_by('slug', strtolower($_cat) , 'fighters' );
 	        if ( $category->term_id ) {
 	            $category = $category->term_id;
 	        }else{
@@ -247,7 +247,7 @@ if(!class_exists('DMFightersGenerate')){
 	                'cat_name' => ucfirst($_cat),
 	                'category_description' => '',
 	                'category_nicename' => ucfirst($_cat),
-	                'taxonomy' => 'fighters_category'
+	                'taxonomy' => 'fighters'
 	            ],false);
 	        }
 	        $f = $_temp_fighter;
@@ -261,7 +261,7 @@ if(!class_exists('DMFightersGenerate')){
 
 			$_post_id = wp_insert_post($_wp_post_fields);
 			if(!empty($_post_id)){
-				wp_set_post_terms( $_post_id, [$category], 'fighters_category' );
+				wp_set_post_terms( $_post_id, [$category], 'fighters' );
 				$images = array($f['featured_image'],$f['RightFullBodyImage'],$f['LeftFullBodyImage']);
 				$option_fields = [
 	                '_uf_nickname' => $f['gssNickname'],
@@ -417,7 +417,7 @@ if(!class_exists('DMFightersGenerate')){
 			global $wpdb;
 	  		$tt = $wpdb->prefix.'term_taxonomy';
 	  		$t = $wpdb->prefix.'terms';
-	  		$tax = 'fighters_category';
+	  		$tax = 'fighters';
 	  		$cat = $wpdb->get_results( ' SELECT t.`name`, t.`slug` FROM `'. $tt .'` AS tt, `'. $t .'` AS t WHERE tt.`taxonomy` = "'. $tax .'" AND tt.`term_id` = t.`term_id` ' );
 		?>
 		<div class="wrap">
