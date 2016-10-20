@@ -15,11 +15,22 @@
     '_uf_leg_reach'=>'Leg Reach',
   ];
 
-  $skill_breakdown = [
-    '_uf_rank'=>"Rank",
+  $fight_record = [
     '_uf_win'=>"Win",
     '_uf_loss'=>"Loss",
     '_uf_draw'=>"Draw",
+    '_uf_wintko'=>"Win By KO/TKO",
+    '_uf_winsubmissions'=>"Win By Submissions",
+    '_uf_windecisions'=>"Win By Decisions",
+    '_uf_windq'=>"Win By DQ",
+    '_uf_losstko'=>"Loss By KO/TKO",
+    '_uf_losssubmissions'=>"Loss By Submissions",
+    '_uf_lossdecisions'=>"Loss By Decisions",
+    '_uf_lossdq'=>"Loss By DQ",
+  ];
+
+  $skill_breakdown = [
+    '_uf_rank'=>"Rank",
     '_uf_summary'=>"Summary",
     '_uf_takedown'=>"Takedown",
     '_uf_takedownattempts'=>"Takedown Attempts",
@@ -47,6 +58,17 @@
       </div>
       <?php
     }
+  }
+  ?>
+  <h4>Fight Record</h4>
+  <?php
+  foreach ($fight_record as $key => $value) {
+    ?>
+    <div class="cont-tb">
+      <label for="<?=$key?>"><?=$value?>: </label>
+      <input type="text" name="<?=$key?>" id="<?=$key?>" value="<?=$gr_ov_data[$key]?>" />
+    </div>
+    <?php
   }
   ?>
   <h4>Skill Breakdown</h4>

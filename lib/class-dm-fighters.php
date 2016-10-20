@@ -30,6 +30,14 @@ if(!class_exists('DMFighters')){
                 '_uf_association',
                 '_uf_firstname',
                 '_uf_lastname',
+                '_uf_wintko',
+                '_uf_winsubmissions',
+                '_uf_windecisions',
+                '_uf_windq',
+                '_uf_losstko',
+                '_uf_losssubmissions',
+                '_uf_lossdecisions',
+                '_uf_lossdq',
             ],
             'fighter_images' => [
                 '_uf_image'
