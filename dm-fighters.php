@@ -17,6 +17,7 @@ require_once(DM_FIGHTERS_PLUGIN_DIR . 'lib/class-dm-fighters-generate.php');
 require_once(DM_FIGHTERS_PLUGIN_DIR . '/vendor/autoload.php');
 require_once(DM_FIGHTERS_PLUGIN_DIR . 'lib/class-dm-fighters.php');
 require_once(DM_FIGHTERS_PLUGIN_DIR . 'lib/class-dm-fights.php');
+require_once(DM_FIGHTERS_PLUGIN_DIR . 'lib/class-dm-events.php');
 require_once(DM_FIGHTERS_PLUGIN_DIR . 'lib/class-dm-ads.php');
 
 if(class_exists('DMFighters')){
@@ -25,8 +26,8 @@ if(class_exists('DMFighters')){
   $DMFighters = new DMFighters();
 }
 
-if(class_exists('DMFights')){
-  $DMFights = new DMFights();
+if(class_exists('DMEvents')){
+  $DMEvents = new DMEvents();
 }
 if(class_exists('DMAds')){
   $DMAds = new DMAds();

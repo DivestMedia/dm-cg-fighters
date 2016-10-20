@@ -264,8 +264,10 @@ if(!class_exists('DMFightersGenerate')){
 				wp_set_post_terms( $_post_id, [$category], 'fighters' );
 				$images = array($f['featured_image'],$f['RightFullBodyImage'],$f['LeftFullBodyImage']);
 				$option_fields = [
+	                '_uf_firstname' => $f['gssFirstName'],
+	                '_uf_lastname' => $f['gssLastName'],
 	                '_uf_nickname' => $f['gssNickname'],
-	                '_uf_hometown' => $f['ighter-lives-in'],
+	                '_uf_hometown' => $f['fighter-lives-in'],
 	                '_uf_age' => $f['fighter-age'],
 	                '_uf_height' => $f['gssHeightFormat'],
 	                '_uf_weight' => $f['gssWeight'],
