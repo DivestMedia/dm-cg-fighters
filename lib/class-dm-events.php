@@ -7,16 +7,16 @@ if(!class_exists('DMEvents')){
 		
     	public $option_fields = [
             'event_details' => [
-                'ed_fighter',
-            	'ed_fighter_id',
-                'ed_opponent',
-                'ed_opponent_id',
-                'ed_location',
-                'ed_result',
-                'ed_decision',
-                'ed_date',
-                'ed_round',
-                'ed_time',
+                '_ed_fighter',
+            	'_ed_fighter_id',
+                '_ed_opponent',
+                '_ed_opponent_id',
+                '_ed_location',
+                '_ed_result',
+                '_ed_decision',
+                '_ed_date',
+                '_ed_round',
+                '_ed_time',
             ]
         ];
         public $fight_result = [

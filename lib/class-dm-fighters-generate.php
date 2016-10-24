@@ -7,7 +7,7 @@ if(!class_exists('DMFightersGenerate')){
     	public $_is_get_next_page = true;
 
     	public $fighter_category = [
-           'Flyweight'=>'//*[@id="wc-0"]/div/a',
+           'Flyweight'=>'//*[@id="dd-fighters-classes"]/ul/li[1]/a',
            'Bantamweight'=>'//*[@id="wc-1"]/div/a',
            'Featherweight'=>'//*[@id="wc-2"]/div/a',
            'Lightweight'=>'//*[@id="wc-3"]/div/a',
