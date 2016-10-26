@@ -96,7 +96,7 @@ if(!class_exists('DMFighters')){
                if(empty($request['fighters'])&&!empty($_GET['Fighter_Category'])){
                     $term = get_term($_GET['Fighter_Category']);
                     if(empty($term->errors))
-                        $request['fighters'] = $term->name;
+                        $request['fighters'] = $term->slug;
                }
             }
             return $request;
