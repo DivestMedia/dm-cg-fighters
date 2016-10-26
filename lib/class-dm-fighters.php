@@ -47,14 +47,59 @@ if(!class_exists('DMFighters')){
             add_action('init', [&$this, 'main_init']);
             add_action('admin_init', [&$this, 'admin_init']);
             parent::__CONSTRUCT();
-            // add_filter( 'manage_edit-iod_video_columns', [&$this,'custom_iod_video_columns'] ) ;
-            // add_action( 'manage_posts_custom_column' , [&$this,'iod_video_columns_data'], 10, 2 );
-            // add_action( 'admin_head' , [&$this,'iod_video_columns_css'] );
             add_filter( 'manage_edit-fighter_columns', [&$this,'custom_fighter_columns'] ) ;
             add_action( 'manage_posts_custom_column' , [&$this,'fighter_columns_data'], 10, 2 );
             add_action( 'admin_head' , [&$this,'fighter_columns_css'] );
 
             add_action( 'wp_ajax_updatefeaturedfighter', [&$this,'updatefeaturedfighter'] );
+
+            add_action('restrict_manage_posts',[&$this,'list_fightercategories']);
+            add_action( 'request', [&$this,'filter_fighterbycategory'] );
+
+            // add_filter( "manage_edit-fighter_sortable_columns", [&$this,"sortable_columns"] );
+             add_filter( 'posts_where' , [&$this,'posts_where'] );
+        }
+
+        public function posts_where( $where ) {
+            if( is_admin() ) {
+                global $wpdb;       
+                if ( isset( $_GET['dd_is_featured'] ) ) {
+                    $is_featured = intval( $_GET['dd_is_featured'] );
+                    if($is_featured == 1)
+                        $where .= " AND ID IN (SELECT post_id FROM " . $wpdb->postmeta ." WHERE meta_key='_is_featured' AND meta_value=$is_featured  )";
+                    elseif($is_featured == 0)
+                        $where .= " AND ID IN (SELECT pm.post_id FROM " . $wpdb->postmeta ." AS pm WHERE (pm.meta_key='_is_featured' AND pm.meta_value=0) OR (SELECT COUNT(1) FROM " . $wpdb->postmeta ." AS pmc WHERE pmc.meta_id = pm.meta_id AND pmc.meta_key='_is_featured')  ) = 0 ";
+                }
+            }   
+            return $where;
+        }
+       
+
+        public function list_fightercategories($request) {
+            global $typenow;
+            if ($typenow=='fighter'){
+                $args = array(
+                    'show_option_all' => "Show All Categories",
+                    'taxonomy'        => 'fighters',
+                    'name'            => 'Fighter Category',
+                    'selected'        => !empty($_GET['fighters'])?$_GET['fighters']:(!empty($_GET['Fighter_Category'])?$_GET['Fighter_Category']:'')
+                );
+                wp_dropdown_categories($args);
+                $_selected = -1;
+                if(isset($_GET['dd_is_featured']))
+                    $_selected = $_GET['dd_is_featured'];
+                print_r('<select name="dd_is_featured"><option value="-1" '.($_selected==-1?'selected':'').'>-- Is Featured --</option><option value="1" '.($_selected==1?'selected':'').'>Featured</option><option value="0" '.($_selected==0?'selected':'').'>Not Featured</option></select>');
+            }
+        }
+        public function filter_fighterbycategory($request) {
+            if (is_admin() && $GLOBALS['PHP_SELF'] == '/wp-admin/edit.php' && isset($request['post_type']) && $request['post_type']=='fighter') {
+               if(empty($request['fighters'])&&!empty($_GET['Fighter_Category'])){
+                    $term = get_term($_GET['Fighter_Category']);
+                    if(empty($term->errors))
+                        $request['fighters'] = $term->name;
+               }
+            }
+            return $request;
         }
 
         public function updatefeaturedfighter(){
@@ -77,10 +122,19 @@ if(!class_exists('DMFighters')){
           die();
         }
 
+
+        public function sortable_columns() {
+            return array(
+                'title'      => 'Title',
+                'date'      => 'Date',
+                'is_featured_cr'      => 'Is Featured'
+            );
+        }
+
         public function fighter_columns_css(){
             echo '
             <style>
-                .column-is_featured_cr{width:75px;}
+                .column-is_featured_cr{width:120px;}
                 .btn-fighter-update-featured{cursor:pointer;color:#0073aa;}
             </style>
             ';
@@ -105,31 +159,7 @@ if(!class_exists('DMFighters')){
         }
 
 
-        public function iod_video_columns_css(){
-            echo '
-            <style>
-                .column-is_featured{width:75px;}
-            </style>
-            ';
-        }
-
-        public function custom_iod_video_columns( $columns ) {
-            $newcolumns = array(
-                'is_featured' => __( 'Is Featured' )
-            );
-            $columns = array_slice($columns, 0, 5, true) + $newcolumns + array_slice($columns, 5, count($columns) - 1, true) ;
-            return $columns;
-        }
-
-        public function iod_video_columns_data( $column, $post_id ) {
-            switch ( $column ) {
-            case 'is_featured':
-                $isfeatured = json_decode(get_post_meta( $post_id, '_is_featured',true));
-                $icon = empty($isfeatured)?'empty':'filled';
-                echo '<a href="'.get_home_url().'/updatefeatured/'.$post_id.'" title="Set as featured video"><span class="dashicons dashicons-star-'.$icon.'"></span></a>';
-                break;
-            }
-        }
+        
 
         public function main_init(){
             $this->create_fighters_post_type();
