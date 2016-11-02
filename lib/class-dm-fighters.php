@@ -41,6 +41,9 @@ if(!class_exists('DMFighters')){
             ],
             'fighter_images' => [
                 '_uf_image'
+            ],
+            'fighter_videos' => [
+                '_uf_video'
             ]
         ];
         public function __CONSTRUCT(){
@@ -52,6 +55,8 @@ if(!class_exists('DMFighters')){
             add_action( 'admin_head' , [&$this,'fighter_columns_css'] );
 
             add_action( 'wp_ajax_updatefeaturedfighter', [&$this,'updatefeaturedfighter'] );
+
+            add_action( 'wp_ajax_getallvideo', [&$this,'getallvideo'] );
 
             add_action('restrict_manage_posts',[&$this,'list_fightercategories']);
             add_action( 'request', [&$this,'filter_fighterbycategory'] );
@@ -100,6 +105,45 @@ if(!class_exists('DMFighters')){
                }
             }
             return $request;
+        }
+
+        public function getallvideo(){
+             $r_videos = get_posts([
+                'post_type'   => 'iod_video',
+                'post_status' => 'publish',
+                'orderby' => 'date',
+                'order' => 'DESC',
+                'tax_query' => array(
+                    array(
+                        'taxonomy' => 'post_tag',
+                        'field' => 'slug',
+                        'terms' => 'fighter-video'
+                    )
+                ),
+                'exclude' => []
+            ]);
+             $videos = [];
+             if(!empty($r_videos)){
+                foreach ($r_videos as $key => $vid) {
+                    $term = get_the_terms($vid->ID,'iod_category');
+                    $category = !empty($term[0])?$term[0]->name:'';
+                    $video = get_post_meta($vid->ID,'_iod_video',true);
+                    if(!empty($video)){
+                        $video = json_decode($video, true);
+                        $video_url = !empty($video['embed']['url'])?$video['embed']['url']:'';
+                    }
+                    $v_details = [
+                        'id' => $vid->ID,
+                        'title' => $vid->post_title,
+                        'category' => $category,
+                        'video' => $video_url,
+                        'thumbnail' => wp_get_attachment_image_src(get_post_thumbnail_id($vid->ID),'full')[0],
+                    ];
+                    array_push($videos,$v_details);
+                }
+             }
+             echo json_encode($videos);
+            die();
         }
 
         public function updatefeaturedfighter(){
@@ -255,13 +299,27 @@ if(!class_exists('DMFighters')){
                 public function create_fighters_meta_boxes(){
                     add_meta_box( 'fighter_details', 'Fighter Information', [&$this, 'fighter_details_metabox'], 'fighter' , 'normal', 'high');
                     add_meta_box( 'fighter_images', 'Fighter Images', [&$this, 'fighter_images_metabox'], 'fighter' , 'normal', 'high');
+                    add_meta_box( 'fighter_videos', 'Fighter Videos', [&$this, 'fighter_videos_metabox'], 'fighter' , 'normal', 'high');
+                }
+
+                public function fighter_videos_metabox(){
+                    global $post;
+                    $gr_ov_data  = [];
+                    foreach ($this->option_fields['fighter_videos'] as $field) {
+                        $gr_ov_data[$field] = get_post_meta( $post->ID, $field, true );
+                    }
+                    wp_nonce_field( basename( __FILE__ ), '_fighter_videos_metabox_nonce' );
+                    include_once( DM_FIGHTERS_PLUGIN_DIR . 'templates/dm-fighters_videos-metabox.php' );
                 }
 
                 public function create_fighters_save_post(){
 
                     add_action( 'save_post_fighter', [ &$this , 'save_fighter_details_metabox' ]);
                     add_action( 'save_post_fighter', [ &$this , 'save_fighter_images_metabox' ]);
+                    add_action( 'save_post_fighter', [ &$this , 'save_fighter_videos_metabox' ]);
                 }
+
+
 
                 public function fighter_images_metabox(){
                     global $post;
@@ -273,6 +331,22 @@ if(!class_exists('DMFighters')){
                     include_once( DM_FIGHTERS_PLUGIN_DIR . 'templates/dm-fighters-images-metabox.php' );
                 }
 
+                public function save_fighter_videos_metabox(){
+                    global $post;
+                    if( !isset( $_POST['_fighter_videos_metabox_nonce'] ) || !wp_verify_nonce( $_POST['_fighter_videos_metabox_nonce'], basename( __FILE__ ) ) ){
+                        return;
+                    }
+                    if( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ){
+                        return;
+                    }
+                    if( ! current_user_can( 'edit_post', $post->id ) ){
+                        return;
+                    }
+                    foreach ($this->option_fields['fighter_videos'] as $field) {
+                        $this->save_meta_value($post->ID,$field,$_POST[$field]);
+                    }
+                }
+                
                 public function save_fighter_images_metabox(){
 
                     global $post;

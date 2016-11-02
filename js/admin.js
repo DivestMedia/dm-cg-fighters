@@ -2,6 +2,45 @@
     'use strict';
     var cur = 0;
     $(function() {
+        var cur_sel_vid = [];
+        $('.fighter-vid-preview-container').on('click','.cont-thumb-img',function(){
+            var id = $(this).data('id');
+            $(this).toggleClass('selected');
+            var sel_vid = [];
+            $('.fighter-vid-preview-container').find('.selected').each(function(){
+                sel_vid.push($(this).data('id'));
+            });
+            $('input[name="_uf_video"]').val(sel_vid.join());
+        });
+
+        $('.btn-get-all-videos').click(function(){
+            var sel_vid_ids = $('input[name="_uf_video"]').val();
+            cur_sel_vid = sel_vid_ids.split(',');
+            var vidsContainer = $('.fighter-vid-preview-container');
+            $.ajax({
+                url: "/wp-admin/admin-ajax.php",
+                dataType: 'json',
+                type: 'POST',
+                data: {
+                    'action':'getallvideo',
+                },
+                success: function(result){
+                    if(result.length){
+                        var videos = '';
+                        $.each(result,function(i,v){
+                            var issel = '';
+                            var selected_icon = '';
+                            if(cur_sel_vid.indexOf(v.id.toString())>=0){
+                                issel = 'selected';
+                                selected_icon = '<span class="dashicons dashicons-yes"></span>';
+                            }
+                            vidsContainer.append( '<div class="cont-thumb-img '+issel+'" data-id="'+v.id+'" data-url="'+v.thumbnail+'" style="background: url('+v.thumbnail+') no-repeat center center;background-size: cover;">'+selected_icon+'</div>' );
+                        });
+                    }
+                },
+                error: function(errorThrown){console.log(errorThrown);}
+            });
+        });
 
         if($( ".fighter-img-container" ).find('div').length){
               $( ".fighter-img-container" ).sortable({

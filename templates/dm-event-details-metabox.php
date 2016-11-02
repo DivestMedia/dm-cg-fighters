@@ -1,7 +1,7 @@
 <div id="container-event-details">
 <?php
-	$decision = ['NA','UD','MD','SD','TKO','KO','NC'];
-	$result = ['NA','Win','Loss','Draw'];
+	$decision = ['NA','UD','MD','SD','TD','TKO','KO','NC','SUB','RTD','OT'];
+	$result = ['NA','Win','Loss','Draw','No Contest'];
 ?>
 
 		<div class="cont-tb">
