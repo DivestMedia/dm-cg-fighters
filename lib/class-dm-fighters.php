@@ -109,6 +109,7 @@ if(!class_exists('DMFighters')){
 
         public function getallvideo(){
              $r_videos = get_posts([
+                'posts_per_page' => -1,
                 'post_type'   => 'iod_video',
                 'post_status' => 'publish',
                 'orderby' => 'date',
